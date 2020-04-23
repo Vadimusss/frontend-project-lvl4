@@ -9,3 +9,9 @@ export const messagesReduser = createReducer([], {
     state.push(message);
   },
 });
+
+export const currentChannelIdReduser = (state = 0, action) => {
+  switch (action.type) {
+    default: return state;
+  }
+}
