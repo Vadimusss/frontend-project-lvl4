@@ -1,16 +1,35 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import Chat from './components/Chat';
-import reducers from './reducers';
+import { configureStore } from '@reduxjs/toolkit'
+import Layout from './components/Layout';
+import { reducer as formReducer } from 'redux-form';
+import { channelsReduser, messagesReduser, currentChannelIdReduser } from './reducers';
+import { receivingMessage } from './actions';
+import UserNameContext from './context'; 
 
-export default (initState) => {
-  const store = createStore(reducers, initState);
+export default (initState, socket, userName) => {
+  const store = configureStore({
+    reducer: {
+      channels: channelsReduser,
+      messages: messagesReduser,
+      currentChannelId: currentChannelIdReduser,
+      form: formReducer,
+    },
+    devTools: process.env.NODE_ENV !== 'production',
+    preloadedState: initState,
+  });
 
-  render (
+  socket.on('newMessage', function (data) {
+    const { data: { attributes } } = data;
+    store.dispatch(receivingMessage(attributes));
+  });
+
+  render(
     <Provider store={store}>
-      <Chat />
+      <UserNameContext.Provider value={userName}>
+        <Layout />
+      </UserNameContext.Provider>,
     </Provider>,
     document.getElementById('chat'),
   );
