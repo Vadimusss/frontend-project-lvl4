@@ -1,0 +1,12 @@
+{
+  "ru": {
+    "translation": {
+      "sendMessageFulfilled": "The message is sent successfully",
+      "sendMessageRejected": "Failed to send message:",
+      "addChannelRejected": "Failed to add channel:",
+      "renameChannelRejected": "Failed to rename channel:",
+      "removeChannelRejected": "Failed to remove channel:",
+      "unknownError": "An unknown error occurred"
+    }
+  }
+}
