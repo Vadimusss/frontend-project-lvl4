@@ -7,6 +7,7 @@ import '../assets/application.scss';
 
 import faker from 'faker';
 // @ts-ignore
+// eslint-disable-next-line import/no-unresolved
 import gon from 'gon';
 import Cookies from 'js-cookie';
 import io from 'socket.io-client';
@@ -24,11 +25,18 @@ const getName = () => {
   // @ts-ignore
   Cookies.set('name', faker.name.firstName());
   return Cookies.get('name');
-}
+};
 
 const socket = io();
 
-application(gon, socket, getName());
+const { channels, messages, currentChannelId } = gon;
+const initState = {
+  channels,
+  messages: {
+    entities: messages,
+    sendingState: 'idle',
+  },
+  currentChannelId,
+};
 
-console.log('it works!');
-console.log('gon', gon);
+application(initState, socket, getName());
