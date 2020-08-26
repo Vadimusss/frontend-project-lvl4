@@ -1,20 +1,16 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-const mapStateToProps = ({ messages, currentChannelId }) => {
-  const props = { messages: messages.filter(({ channelId }) => channelId === currentChannelId) };
-  return props;
+const Messages = () => {
+  const currentChannemessages = useSelector((state) => state.messages.entities
+    .filter(({ channelId }) => channelId === state.currentChannelId));
+
+  return (<div className="mb-auto overflow-auto">
+    {currentChannemessages.map(({ id, text, name }) => <p key={id}>
+      <span className="font-weight-bold">{name}</span>
+      {`: ${text}`}
+    </p>)}
+  </div>);
 };
 
-const Messages = (props) => {
-  return (
-    <>
-      {props.messages.map(({ id, text, name }) => <p key={id}>
-        <span className="font-weight-bold">{name}</span>
-        {`: ${text}`}
-      </p>)}
-    </>
-  )
-}
-
-export default connect(mapStateToProps)(Messages);
+export default Messages;
