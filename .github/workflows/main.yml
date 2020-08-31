@@ -7,6 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: install deps
-      run: npm install
+      run: npm install https://github.com/Vadimusss/frontend-project-lvl4.git
     - name: Run tests
       run: make test
