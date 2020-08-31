@@ -1,18 +1,12 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Run-tests
-
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on:
   workflow_dispatch:
-env:
-  GO_VERSION: 0.0.1
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   test:
     name: Run Tests
     runs-on: ubuntu-latest
     steps:
-    - name: Test nodejs
-      run: node -v
+    - name: install deps
+      run: npm install
+    - name: Run tests
+      run: make test
