@@ -6,8 +6,6 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     steps:
-    - name: xz
-      run: git clone https://github.com/Vadimusss/frontend-project-lvl4.git
     - name: xzxz
       run: npm install
       
