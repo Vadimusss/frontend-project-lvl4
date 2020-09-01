@@ -6,6 +6,8 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     steps:
-    - name: xzxz
-      run: npm install
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+       node-version: '13.x'
       
