@@ -6,7 +6,5 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     steps:
-    - name: install deps
-      run: git status
     - name: xz
       run: ls -la
