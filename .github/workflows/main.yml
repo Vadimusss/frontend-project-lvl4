@@ -7,4 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: xz
-      run: git clone git://github.com/nodeapps/http-server.git
+      run: git clone https://github.com/Vadimusss/frontend-project-lvl4.git
+    - name: xzxz
+      run: npm install
+      
