@@ -10,4 +10,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
        node-version: '13.x'
+   - name: Install Dependencies
+     run: npm install
+
       
