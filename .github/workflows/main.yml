@@ -1,8 +1,8 @@
   
-name: Node CI
+name: Run tests
 
 on:
-  - workflow_dispatch
+  - push
 
 jobs:
   build:
