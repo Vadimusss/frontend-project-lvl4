@@ -1,6 +1,6 @@
 {
-  "name": "frontend_l4_chat_project",
-  "version": "0.0.1",
+  "name": "slack",
+  "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
   "bin": {
@@ -21,7 +21,7 @@
     "type": "git",
     "url": "github.com/Vadimusss/frontend-project-lvl4.git"
   },
-  "author": "Kirill Mokevnin",
+  "author": "Vadim Piryazev",
   "license": "ISC",
   "homepage": "",
   "dependencies": {
