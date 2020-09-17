@@ -31,12 +31,11 @@ const socket = io();
 
 const { channels, messages, currentChannelId } = gon;
 const initState = {
-  channels,
-  messages: {
-    entities: messages,
-    sendingState: 'idle',
+  channels: {
+    entities: channels,
+    currentChannelId,
   },
-  currentChannelId,
+  messages,
 };
 
 application(initState, socket, getName());
