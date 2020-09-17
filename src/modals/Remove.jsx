@@ -1,35 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Modal, FormGroup } from 'react-bootstrap';
-import { unwrapResult } from '@reduxjs/toolkit';
-import { shallowEqual, useSelector, useDispatch } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { removeChannel } from '../actions';
-import Notification from '../components/Notification.jsx';
+import { useDispatch } from 'react-redux';
+import { Formik, Form } from 'formik';
+import { actions } from '../slices';
 
 const Remove = ({ channel: { id, name }, onHide }) => {
-  const { channelProcessingState } = useSelector((state) => ({
-    channelProcessingState: state.modalState.channelProcessingState,
-  }), shallowEqual);
-  const isPending = channelProcessingState === 'pending';
   const dispatch = useDispatch();
-  const [notification, setNotification] = useState(null);
-  const { t } = useTranslation();
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    dispatch(removeChannel({ id }))
-      .then(unwrapResult)
-      .then(() => {
-        onHide();
-      })
-      .catch((error) => {
-        setNotification(<Notification
-          type={'warning'}
-          message={`${t('removeChannelRejected')} ${error.message}`}
-          liveTime={5000}
-          hide={() => { setNotification(null); }}/>);
-      });
-  };
+  const { removeChannel } = actions;
 
   return (
     <Modal show={true} onHide={onHide}>
@@ -37,12 +14,27 @@ const Remove = ({ channel: { id, name }, onHide }) => {
         <Modal.Title>Remove channel {name}?</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {notification}
-        <form onSubmit={onSubmit}>
-          <FormGroup>
-          </FormGroup>
-          <input type="submit" disabled={isPending} className="btn btn-danger" value="remove" />
-        </form>
+      <Formik
+          initialValues={{
+            channelName: '',
+          }}
+          onSubmit={async () => {
+            try {
+              await dispatch(removeChannel({ id }));
+              onHide();
+            } catch (error) {
+              // console.log(error.message);
+            }
+          }}
+        >
+          {({ isSubmitting }) => (
+            <Form>
+              <FormGroup>
+              </FormGroup>
+              <input type="submit" disabled={isSubmitting} className="btn btn-danger" value="remove" />
+            </Form>
+          )}
+        </Formik>
       </Modal.Body>
     </Modal>
   );
