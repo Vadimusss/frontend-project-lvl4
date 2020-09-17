@@ -1,15 +1,7 @@
 import React from 'react';
-import {
-  Container,
-  Row,
-  Col,
-} from 'react-bootstrap';
-import {
-  Channels,
-  Messages,
-  MessagesForm,
-} from './components';
-import UserNameContext from './context';
+import { Container, Row, Col } from 'react-bootstrap';
+import { Channels, Messages } from '.';
+import UserNameContext from '../context';
 
 const Layout = () => (
   <Container className="h-100">
@@ -18,9 +10,8 @@ const Layout = () => (
         <Channels />
       </Col>
       <Col className="d-flex flex-column h-100">
-        <Messages />
         <UserNameContext.Consumer>
-          {(userName) => <MessagesForm userName={userName} />}
+          {(userName) => <Messages userName={userName} />}
         </UserNameContext.Consumer>
       </Col>
     </Row>

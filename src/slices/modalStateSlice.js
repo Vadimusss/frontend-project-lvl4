@@ -1,23 +1,8 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-param-reassign */
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import routes from '../routes';
-
-export const sendMessage = createAsyncThunk(
-  'messages/sendMessageStatus',
-  async ({ text, name }, { getState }) => {
-    const { currentChannelId } = getState();
-    const response = await axios.post(routes.channelMessagesPath(currentChannelId), {
-      data: {
-        attributes: {
-          text,
-          name,
-        },
-      },
-    });
-
-    return response;
-  },
-);
 
 export const addChannel = createAsyncThunk(
   'modalState/channelAddingStatus',
@@ -57,3 +42,25 @@ export const removeChannel = createAsyncThunk(
     return response;
   },
 );
+
+const modalStateSlice = createSlice({
+  name: 'modalState',
+  initialState: {
+    type: null,
+    channel: { id: null, name: null },
+    channelProcessingState: 'idle',
+  },
+  reducers: {
+    showModal(state, action) {
+      const { type, channel = { id: null, name: null } } = action.payload;
+      state.type = type;
+      state.channel = channel;
+    },
+    hideModal(state, action) {
+      state.type = null;
+      state.channel = { id: null, name: null };
+    },
+  },
+});
+
+export default modalStateSlice;
