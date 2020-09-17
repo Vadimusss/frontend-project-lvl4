@@ -2,24 +2,14 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
-import Layout from './Layout.jsx';
+import Layout from './components/Layout.jsx';
 import UserNameContext from './context';
 import './locales';
-import {
-  messagesSlice,
-  currentChannelIdSlice,
-  channelsSlice,
-  modalStateSlice,
-} from './features';
+import { redusers, actions } from './slices';
 
 export default (initState, socket, userName) => {
   const store = configureStore({
-    reducer: {
-      channels: channelsSlice.reducer,
-      messages: messagesSlice.reducer,
-      currentChannelId: currentChannelIdSlice.reducer,
-      modalState: modalStateSlice.reducer,
-    },
+    reducer: redusers,
     middleware: getDefaultMiddleware({
       serializableCheck: false,
     }),
@@ -27,20 +17,18 @@ export default (initState, socket, userName) => {
     preloadedState: initState,
   });
 
-  const { receivingMessage } = messagesSlice.actions;
+  const {
+    receivingMessage,
+    receivingNewChannel,
+    receivingRemoveChannel,
+    receivingRenameChannel,
+    changeCurrentChannel,
+  } = actions;
 
   socket.on('newMessage', (data) => {
     const { data: { attributes } } = data;
     store.dispatch(receivingMessage(attributes));
   });
-
-  const {
-    receivingNewChannel,
-    receivingRemoveChannel,
-    receivingRenameChannel,
-  } = channelsSlice.actions;
-
-  const { changeCurrentChannel } = currentChannelIdSlice.actions;
 
   socket.on('newChannel', (data) => {
     const { data: { id, attributes } } = data;

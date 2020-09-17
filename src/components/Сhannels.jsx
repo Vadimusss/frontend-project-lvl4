@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { shallowEqual, useSelector, useDispatch } from 'react-redux';
 import { Button, ListGroup, Badge } from 'react-bootstrap';
-import { currentChannelIdSlice, modalStateSlice } from '../features';
+import { actions } from '../slices';
 import getModal from '../modals';
 
 const renderModal = ({ modalState, onHide }) => {
@@ -17,15 +17,12 @@ const renderModal = ({ modalState, onHide }) => {
 
 const Channels = () => {
   const { channels, currentChannelId, modalState } = useSelector((state) => ({
-    channels: state.channels,
-    currentChannelId: state.currentChannelId,
+    channels: state.channels.entities,
+    currentChannelId: state.channels.currentChannelId,
     modalState: state.modalState,
   }), shallowEqual);
-
   const dispatch = useDispatch();
-
-  const { changeCurrentChannel } = currentChannelIdSlice.actions;
-  const { showModal, hideModal } = modalStateSlice.actions;
+  const { changeCurrentChannel, showModal, hideModal } = actions;
   const onHide = () => dispatch(hideModal());
 
   const addBottonRef = useRef();
