@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, forwardRef } from 'react';
 import { Formik, Field as FormikField, Form } from 'formik';
-import { Modal, FormGroup } from 'react-bootstrap';
+import { Modal, FormGroup, Alert } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { actions } from '../slices';
 
@@ -18,7 +18,18 @@ const Rename = ({ channel: { id, name }, onHide }) => {
     setTimeout(() => {
       ref.current.focus();
     }, 200);
-  });
+  }, [ref]);
+
+  const validate = (values) => {
+    const errors = {};
+    if (values.channelNewName === name) {
+      errors.channelNewName = 'Name hasn\'t changed!';
+    } else if (values.channelNewName === '') {
+      errors.channelNewName = 'Required!';
+    }
+
+    return errors;
+  };
 
   return (
     <Modal show={true} onHide={onHide}>
@@ -27,9 +38,11 @@ const Rename = ({ channel: { id, name }, onHide }) => {
       </Modal.Header>
       <Modal.Body>
         <Formik
+          validateOnBlur={false}
           initialValues={{
             channelNewName: name,
           }}
+          validate={validate}
           onSubmit={async (values) => {
             const { channelNewName } = values;
             try {
@@ -40,10 +53,20 @@ const Rename = ({ channel: { id, name }, onHide }) => {
             }
           }}
         >
-          {({ isSubmitting }) => (
+          {({
+            isSubmitting,
+            errors,
+            isValid,
+          }) => (
             <Form>
               <FormGroup>
-                <Field ref={ref} className="form-control" name="channelNewName" disabled={isSubmitting} />
+                <Field
+                  ref={ref}
+                  className={`form-control${isValid ? '' : ' is-invalid'}`}
+                  name="channelNewName"
+                  disabled={isSubmitting}
+                />
+              {!isValid && <Alert variant='danger'>{errors.channelNewName}</Alert>}
               </FormGroup>
               <input type="submit" disabled={isSubmitting} className="btn btn-primary" value="submit" />
             </Form>

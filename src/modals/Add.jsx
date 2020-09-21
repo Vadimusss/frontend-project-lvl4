@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, forwardRef } from 'react';
 import { Formik, Field as FormikField, Form } from 'formik';
-import { Modal, FormGroup } from 'react-bootstrap';
+import { Modal, FormGroup, Alert } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { actions } from '../slices';
 
@@ -15,10 +15,19 @@ const Add = ({ onHide }) => {
   const ref = useRef();
 
   useEffect(() => {
+    console.log(ref);
     setTimeout(() => {
       ref.current.focus();
     }, 200);
-  });
+  }, [ref]);
+
+  const validate = (values) => {
+    const errors = {};
+    if (values.channelName === '') {
+      errors.channelName = 'Required';
+    }
+    return errors;
+  };
 
   return (
     <Modal show={true} onHide={onHide}>
@@ -27,9 +36,11 @@ const Add = ({ onHide }) => {
       </Modal.Header>
       <Modal.Body>
         <Formik
+          validateOnBlur={false}
           initialValues={{
             channelName: '',
           }}
+          validate={validate}
           onSubmit={async (values) => {
             const { channelName } = values;
             try {
@@ -40,12 +51,27 @@ const Add = ({ onHide }) => {
             }
           }}
         >
-          {({ isSubmitting }) => (
+          {({
+            isSubmitting,
+            errors,
+            isValid,
+          }) => (
             <Form>
               <FormGroup>
-                <Field ref={ref} className="form-control" name="channelName" disabled={isSubmitting} />
+                <Field
+                  ref={ref}
+                  className={`form-control${isValid ? '' : ' is-invalid'}`}
+                  name="channelName"
+                  disabled={isSubmitting}
+                />
+                {!isValid && <Alert variant='danger'>{errors.channelName}</Alert>}
               </FormGroup>
-              <input type="submit" disabled={isSubmitting} className="btn btn-primary" value="submit" />
+              <input
+                type="submit"
+                disabled={isSubmitting || !isValid}
+                className="btn btn-primary"
+                value="submit"
+              />
             </Form>
           )}
         </Formik>
