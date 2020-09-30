@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { shallowEqual, useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Button, ListGroup, Badge } from 'react-bootstrap';
 import { actions } from '../slices';
 import getModal from '../modals';
@@ -20,7 +20,7 @@ const Channels = () => {
     channels: state.channels.entities,
     currentChannelId: state.channels.currentChannelId,
     modalState: state.modalState,
-  }), shallowEqual);
+  }));
   const dispatch = useDispatch();
   const { changeCurrentChannel, showModal, hideModal } = actions;
   const onHide = () => dispatch(hideModal());
