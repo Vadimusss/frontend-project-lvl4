@@ -1,7 +1,14 @@
 import React, { useEffect, useRef, forwardRef } from 'react';
-import { Formik, Field as FormikField, Form } from 'formik';
+import {
+  Formik,
+  ErrorMessage,
+  Field as FormikField,
+  Form,
+} from 'formik';
+import { unwrapResult } from '@reduxjs/toolkit';
 import { Modal, FormGroup, Alert } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
+import * as Yup from 'yup';
 import { actions } from '../slices';
 
 // eslint-disable-next-line react/display-name
@@ -9,25 +16,21 @@ const Field = forwardRef((props, ref) => (
   <FormikField innerRef={ref} {...props} />
 ));
 
+const validationSchema = Yup.object().shape({
+  channelName: Yup.string()
+    .required('Required'),
+});
+
 const Add = ({ onHide }) => {
   const dispatch = useDispatch();
   const { addChannel } = actions;
   const ref = useRef();
 
   useEffect(() => {
-    console.log(ref);
     setTimeout(() => {
       ref.current.focus();
     }, 200);
   }, [ref]);
-
-  const validate = (values) => {
-    const errors = {};
-    if (values.channelName === '') {
-      errors.channelName = 'Required';
-    }
-    return errors;
-  };
 
   return (
     <Modal show={true} onHide={onHide}>
@@ -40,20 +43,23 @@ const Add = ({ onHide }) => {
           initialValues={{
             channelName: '',
           }}
-          validate={validate}
-          onSubmit={async (values) => {
+          validationSchema={validationSchema}
+          onSubmit={async (values, { setSubmitting, resetForm, setErrors }) => {
             const { channelName } = values;
-            try {
-              await dispatch(addChannel({ name: channelName }));
-              onHide();
-            } catch (error) {
-              // console.log(error.message);
-            }
+            dispatch(addChannel({ name: channelName }))
+              .then(unwrapResult)
+              .then(() => {
+                setSubmitting(false);
+                resetForm();
+                onHide();
+              })
+              .catch((error) => {
+                setErrors({ channelName: error.message });
+              });
           }}
         >
           {({
             isSubmitting,
-            errors,
             isValid,
           }) => (
             <Form>
@@ -64,7 +70,10 @@ const Add = ({ onHide }) => {
                   name="channelName"
                   disabled={isSubmitting}
                 />
-                {!isValid && <Alert variant='danger'>{errors.channelName}</Alert>}
+                <ErrorMessage
+                  name="channelName"
+                  render={(msg) => <Alert className={'alert-danger'}>{msg}</Alert>}
+                />
               </FormGroup>
               <input
                 type="submit"

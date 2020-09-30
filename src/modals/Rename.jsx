@@ -1,7 +1,14 @@
 import React, { useEffect, useRef, forwardRef } from 'react';
-import { Formik, Field as FormikField, Form } from 'formik';
+import {
+  Formik,
+  ErrorMessage,
+  Field as FormikField,
+  Form,
+} from 'formik';
+import { unwrapResult } from '@reduxjs/toolkit';
 import { Modal, FormGroup, Alert } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
+import * as Yup from 'yup';
 import { actions } from '../slices';
 
 // eslint-disable-next-line react/display-name
@@ -20,16 +27,11 @@ const Rename = ({ channel: { id, name }, onHide }) => {
     }, 200);
   }, [ref]);
 
-  const validate = (values) => {
-    const errors = {};
-    if (values.channelNewName === name) {
-      errors.channelNewName = 'Name hasn\'t changed!';
-    } else if (values.channelNewName === '') {
-      errors.channelNewName = 'Required!';
-    }
-
-    return errors;
-  };
+  const validationSchema = Yup.object().shape({
+    channelNewName: Yup.string()
+      .required('Required')
+      .test('Unique', 'Must be unique', (value) => value !== name),
+  });
 
   return (
     <Modal show={true} onHide={onHide}>
@@ -42,20 +44,23 @@ const Rename = ({ channel: { id, name }, onHide }) => {
           initialValues={{
             channelNewName: name,
           }}
-          validate={validate}
-          onSubmit={async (values) => {
+          validationSchema={validationSchema}
+          onSubmit={async (values, { setSubmitting, resetForm, setErrors }) => {
             const { channelNewName } = values;
-            try {
-              await dispatch(renameChannel({ id, name: channelNewName }));
-              onHide();
-            } catch (error) {
-              // console.log(error.message);
-            }
+            dispatch(renameChannel({ id, name: channelNewName }))
+              .then(unwrapResult)
+              .then(() => {
+                setSubmitting(false);
+                resetForm();
+                onHide();
+              })
+              .catch((error) => {
+                setErrors({ channelNewName: error.message });
+              });
           }}
         >
           {({
             isSubmitting,
-            errors,
             isValid,
           }) => (
             <Form>
@@ -66,7 +71,10 @@ const Rename = ({ channel: { id, name }, onHide }) => {
                   name="channelNewName"
                   disabled={isSubmitting}
                 />
-              {!isValid && <Alert variant='danger'>{errors.channelNewName}</Alert>}
+                <ErrorMessage
+                  name="channelNewName"
+                  render={(msg) => <Alert className={'alert-danger'}>{msg}</Alert>}
+                />
               </FormGroup>
               <input type="submit" disabled={isSubmitting} className="btn btn-primary" value="submit" />
             </Form>
