@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, forwardRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Formik, Field as FormikField, Form } from 'formik';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { Alert } from 'react-bootstrap';
+import {
+  Formik,
+  ErrorMessage,
+  Field as FormikField,
+  Form,
+} from 'formik';
 import { actions } from '../slices';
 
 // eslint-disable-next-line react/display-name
@@ -35,20 +42,26 @@ const Messages = (props) => {
           message: '',
           userName: props.userName,
         }}
-        onSubmit={ async (values, { setSubmitting, resetForm }) => {
+        onSubmit={ async (values, { setSubmitting, resetForm, setErrors }) => {
           const { userName } = props;
           const { message } = values;
-          try {
-            await dispatch(sendMessage({ text: message, name: userName }));
-            setSubmitting(false);
-            resetForm();
-          } catch (error) {
-            // console.log(error.message);
-          }
+          dispatch(sendMessage({ text: message, name: userName }))
+            .then(unwrapResult)
+            .then(() => {
+              setSubmitting(false);
+              resetForm();
+            })
+            .catch((error) => {
+              setErrors({ message: error.message });
+            });
         }}
       >
         {({ isSubmitting }) => (
           <Form>
+            <ErrorMessage
+              name="message"
+              render={(msg) => <Alert className={'alert-danger'}>{msg}</Alert>}
+            />
             <Field ref={ref} className="form-control" name="message" disabled={isSubmitting} />
           </Form>
         )}
