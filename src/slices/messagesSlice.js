@@ -9,7 +9,7 @@ export const sendMessage = createAsyncThunk(
   'messages/sendMessageStatus',
   async ({ text, name }, { getState }) => {
     const { currentChannelId } = getState().channels;
-    const response = await axios.post(routes.channelMessagesPath(currentChannelId), {
+    await axios.post(routes.channelMessagesPath(currentChannelId), {
       data: {
         attributes: {
           text,
@@ -17,8 +17,6 @@ export const sendMessage = createAsyncThunk(
         },
       },
     });
-
-    return response;
   },
 );
 

@@ -7,39 +7,33 @@ import routes from '../routes';
 export const addChannel = createAsyncThunk(
   'modalState/channelAddingStatus',
   async ({ name }) => {
-    const response = await axios.post(routes.channelsPath(), {
+    await axios.post(routes.channelsPath(), {
       data: {
         attributes: {
           name,
         },
       },
     });
-
-    return response;
   },
 );
 
 export const renameChannel = createAsyncThunk(
   'modalState/channelRenamingStatus',
   async ({ id, name }) => {
-    const response = await axios.patch(routes.channelPath(id), {
+    await axios.patch(routes.channelPath(id), {
       data: {
         attributes: {
           name,
         },
       },
     });
-
-    return response;
   },
 );
 
 export const removeChannel = createAsyncThunk(
   'modalState/channelRemoveingStatus',
   async ({ id }) => {
-    const response = await axios.delete(routes.channelPath(id));
-
-    return response;
+    await axios.delete(routes.channelPath(id));
   },
 );
 

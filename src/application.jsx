@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import Layout from './components/Layout.jsx';
 import UserNameContext from './context';
 import './locales';
@@ -10,9 +10,6 @@ import { redusers, actions } from './slices';
 export default (initState, socket, userName) => {
   const store = configureStore({
     reducer: redusers,
-    middleware: getDefaultMiddleware({
-      serializableCheck: false,
-    }),
     devTools: process.env.NODE_ENV !== 'production',
     preloadedState: initState,
   });
